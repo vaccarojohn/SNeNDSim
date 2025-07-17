@@ -1,17 +1,9 @@
 import h5py
 import numpy as np
+from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
 infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/Cosmics'
 outfile_dir = 'graph_data'
-
-def in_active_volume(x_start, x_end, y_start, y_end, z_start, z_end):
-    return max(abs(x_start), abs(z_start), abs(x_end), abs(z_end)) <= 30 and max(abs(y_start), abs(y_end)) <= 25
-
-def in_signal_volume(x_start, x_end, y_start, y_end, z_start, z_end):
-    return max(abs(x_start), abs(z_start), abs(x_end), abs(z_end)) <= 25 and max(abs(y_start), abs(y_end)) <= 20
-
-def in_fiducial_volume(x_start, x_end, y_start, y_end, z_start, z_end):
-    return max(abs(x_start), abs(z_start), abs(x_end), abs(z_end)) <= 20 and max(abs(y_start), abs(y_end)) <= 15
     
 if __name__ == "__main__":
     data_energies = []
@@ -58,8 +50,13 @@ if __name__ == "__main__":
                 # Save the greatest energy deposit, longest path length, and percentage of energy deposited in the fiducial/signal volumes
                 data_energies.append(temp_energies[greatest_energy_dep])
                 data_lengths.append(temp_lengths[longest_path])
-                data_fenergy.append(temp_totalenergy[0] / temp_totalenergy[2])
-                data_senergy.append(temp_totalenergy[1] / temp_totalenergy[2])
+
+                if temp_totalenergy[2] == 0:
+                    data_fenergy.append(0)
+                    data_senergy.append(0)
+                else:
+                    data_fenergy.append(temp_totalenergy[0] / temp_totalenergy[2])
+                    data_senergy.append(temp_totalenergy[1] / temp_totalenergy[2])
                 
                 temp_particles = {}
                 temp_energies = {}
@@ -69,12 +66,18 @@ if __name__ == "__main__":
                 event_id = seg['event_id']
 
             # Add the energy deposited in the active, signal, and fiducial volumes for this segment
-            temp_totalenergy[2] += seg['dE']
-            if in_fiducial_volume(seg['x_start'], seg['x_end'], seg['y_start'], seg['y_end'], seg['z_start'], seg['z_end']):
-                temp_totalenergy[0] += seg['dE']
-                temp_totalenergy[1] += seg['dE']
-            elif in_signal_volume(seg['x_start'], seg['x_end'], seg['y_start'], seg['y_end'], seg['z_start'], seg['z_end']):
-                temp_totalenergy[1] += seg['dE']
+            temp_totalenergy[0] += seg['dEdx'] * get_length_in_fiducial_volume(seg['x_start'], seg['x_end'], 
+                                                                               seg['y_start'], seg['y_end'], 
+                                                                               seg['z_start'], seg['z_end'])
+
+            temp_totalenergy[1] += seg['dEdx'] * get_length_in_signal_volume(seg['x_start'], seg['x_end'], 
+                                                                             seg['y_start'], seg['y_end'], 
+                                                                             seg['z_start'], seg['z_end'])
+
+            temp_totalenergy[2] += seg['dEdx'] * get_length_in_active_volume(seg['x_start'], seg['x_end'], 
+                                                                             seg['y_start'], seg['y_end'], 
+                                                                             seg['z_start'], seg['z_end'])
+
 
             # Add the energy deposited and segment length to determine the trajectory with the highest energy deposition and longest path later
             if temp_particles.get(seg['traj_id']):

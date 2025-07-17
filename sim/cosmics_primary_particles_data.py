@@ -1,5 +1,4 @@
 import h5py
-import json
 import numpy as np
 
 infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/Cosmics'
