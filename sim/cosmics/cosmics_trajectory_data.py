@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/test'
+infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/Cosmics'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     data_pslengths = []
     data_pflengths = []
 
-    for i in range(1):
+    for i in range(200):
         print("Loading file " + str(i + 1) + "/10...")
         f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "04") + '.h5', 'r')
 

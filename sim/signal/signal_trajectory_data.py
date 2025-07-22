@@ -12,7 +12,7 @@ if __name__ == "__main__":
     data_pslengths = []
     data_pflengths = []
 
-    for i in range(1):
+    for i in range(10):
         print("Loading file " + str(i + 1) + "/10...")
         f = h5py.File(infile_dir + '/nueArCC_sns_yDir_g4_' + format(i, "04") + '.h5', 'r')
 
