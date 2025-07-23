@@ -6,7 +6,8 @@ infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/Cosmics'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
-    data_energies = []
+    data_lctes = []
+    data_lctls = []
     edata_particles = {}
     data_lengths = []
     ldata_particles = {}
@@ -41,7 +42,8 @@ if __name__ == "__main__":
 
                 # Save the longest path and highest energy deposit (in active volume), as well as the particles responsible
                 if temp_energies[greatest_energy_dep] > 0:
-                    data_energies.append(temp_energies[greatest_energy_dep])
+                    data_lctes.append(temp_energies[greatest_energy_dep])
+                    data_lctls.append(temp_lengths[greatest_energy_dep])
                     if (edata_particles.get(temp_particles[greatest_energy_dep])):
                         edata_particles[temp_particles[greatest_energy_dep]] += 1
                     else:
@@ -100,7 +102,7 @@ if __name__ == "__main__":
 
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/cosmics_segment_data.npz', fenergy=data_fenergy, senergy=data_senergy, aenergy=data_aenergy, 
-                        pfenergy=data_pfenergy, psenergy=data_psenergy, energies=data_energies, lengths=data_lengths, 
+                        pfenergy=data_pfenergy, psenergy=data_psenergy, lctes=data_lctes, lctls=data_lctls, lengths=data_lengths, 
                         eparticles=np.array(list(edata_particles.keys())), ecounts=np.array(list(edata_particles.values())),
                         lparticles=np.array(list(ldata_particles.keys())), lcounts=np.array(list(ldata_particles.values())))
     
