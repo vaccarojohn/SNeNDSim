@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
         event_id = f['trajectories'][0]['event_id']
         
-        for traj in f['trajectories']:
+        for traj in f['trajectories']: 
             l = np.sqrt(np.sum(np.square(traj['xyz_start'] - traj['xyz_end'])))
             
             if l == 0:
