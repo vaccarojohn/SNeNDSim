@@ -22,8 +22,8 @@ if __name__ == "__main__":
         event_id = f['segments'][0]['event_id']
         temp_protons = {}
         temp_crt = 0
-        temp_tmin = 300
-        temp_tmax = 0
+        temp_tmin = 250
+        temp_tmax = -50
         temp_trms = 0
         temp_tseg = 0
         temp_n = 0
@@ -52,8 +52,8 @@ if __name__ == "__main__":
                 
                 temp_protons = {}
                 temp_crt = 0
-                temp_tmin = 300
-                temp_tmax = 0
+                temp_tmin = 250
+                temp_tmax = -50
                 temp_trms = 0
                 temp_tseg = 0
                 temp_n = 0
