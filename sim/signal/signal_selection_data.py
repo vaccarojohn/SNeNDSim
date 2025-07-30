@@ -24,9 +24,8 @@ if __name__ == "__main__":
         temp_crt = 0
         temp_tmin = 250
         temp_tmax = -50
-        temp_trms = 0
+        temp_trms = []
         temp_tseg = 0
-        temp_n = 0
         temp_inDet = False
 
         for seg in f['segments']:
@@ -38,7 +37,13 @@ if __name__ == "__main__":
                     data_light.append(temp_tmin)
                     data_tmin.append(temp_tmin)
                     data_tmax.append(temp_tmax)
-                    data_trms.append(np.sqrt(temp_trms / temp_n))
+                    
+                    s = 0
+                    for t0 in temp_trms:
+                        s += (t0 - temp_tmin)**2
+                    s /= len(temp_trms)
+                    data_trms.append(np.sqrt(s))
+                    
                     data_tseg.append(temp_tseg)
                     data_tdiff.append(temp_tmax - temp_tmin)
                 
@@ -54,9 +59,8 @@ if __name__ == "__main__":
                 temp_crt = 0
                 temp_tmin = 250
                 temp_tmax = -50
-                temp_trms = 0
+                temp_trms = []
                 temp_tseg = 0
-                temp_n = 0
                 temp_inDet = False
                 
                 event_id = seg['event_id']
@@ -67,7 +71,6 @@ if __name__ == "__main__":
 
             if tpc_dist != 0:
                 temp_inDet = True
-                temp_n += 1
                 
                 # Save minimum timestamp of energy deposition segments for each event
                 if seg['t0'] < temp_tmin:
@@ -76,7 +79,7 @@ if __name__ == "__main__":
                 if seg['t0'] > temp_tmax:
                     temp_tmax = seg['t0']
 
-                temp_trms += seg['t0']**2
+                temp_trms.append(seg['t0'])
                 
                 if (seg['t0_end'] - seg['t0_start']) > temp_tseg:
                     temp_tseg = seg['t0_end'] - seg['t0_start']
@@ -93,6 +96,7 @@ if __name__ == "__main__":
 
             
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/signal_selection_data_new.npz', pmaxe=data_pmaxe, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax, trms=data_trms, tseg=data_tseg, tdiff=data_tdiff)
+    np.savez_compressed(outfile_dir + '/signal_selection_data.npz', pmaxe=data_pmaxe, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax, 
+                        trms=data_trms, tseg=data_tseg, tdiff=data_tdiff)
     
-    print("Data successfully written to file signal_selection_data_new.npz!")
+    print("Data successfully written to file signal_selection_data.npz!")
