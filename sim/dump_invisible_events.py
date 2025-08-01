@@ -15,10 +15,10 @@ for category in categories:
     visible_events = []
     for i, (lcte, lctl, pmaxe) in enumerate(np.column_stack((segment_data['lctes'], segment_data['lctls'], selection_data['pmaxe']))):
         if lcte < 5:
-            print("Discovered invisible " + category + " event. Event " + str(i) + " has a leading charged trajectory of " + str(lcte) + ".")
+            #print("Discovered invisible " + category + " event. Event " + str(i) + " has a leading charged trajectory of " + str(lcte) + ".")
             m += 1
         elif lctl < 2:
-            print("Discovered invisible " + category + " event. Event " + str(i) + " has a leading charged trajectory length of " + str(lctl) + ".")
+            #print("Discovered invisible " + category + " event. Event " + str(i) + " has a leading charged trajectory length of " + str(lctl) + ".")
             m += 1
         elif pmaxe < 20:
             selection_data['pmaxe'][i] = 0
@@ -40,6 +40,9 @@ for category in categories:
                         lengths=segment_data['lengths'][visible_events_np])
     
     np.savez_compressed(category + '/' + file_dir + '/' + category + '_selection_data_reduced.npz', pmaxe=selection_data['pmaxe'][visible_events_np],
+                        crttop=selection_data['crttop'][visible_events_np], crtbottom=selection_data['crtbottom'][visible_events_np],
+                        crtleft=selection_data['crtleft'][visible_events_np], crtright=selection_data['crtright'][visible_events_np],
+                        crtfront=selection_data['crtfront'][visible_events_np], crtback=selection_data['crtback'][visible_events_np],
                         crt=selection_data['crt'][visible_events_np], light=selection_data['light'][visible_events_np], 
                         tmin=selection_data['tmin'][visible_events_np], tmax=selection_data['tmax'][visible_events_np], 
                         trms=selection_data['trms'][visible_events_np], tseg=selection_data['tseg'][visible_events_np],

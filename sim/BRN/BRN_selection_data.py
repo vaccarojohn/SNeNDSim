@@ -1,12 +1,18 @@
 import h5py
 import numpy as np
-from helper_functions import get_length_in_active_volume
+from helper_functions import get_length_in_active_volume, get_length_in_cosmic_ray_taggers
 
 infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/BRN'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
     data_pmaxe = []
+    data_crttop = []
+    data_crtbottom = []
+    data_crtleft = []
+    data_crtright = []
+    data_crtfront = []
+    data_crtback = []
     data_crt = []
     data_light = []
     data_tmin = []
@@ -21,7 +27,12 @@ if __name__ == "__main__":
 
         event_id = f['segments'][0]['event_id']
         temp_protons = {}
-        temp_crt = 0
+        temp_crttop = 0
+        temp_crtbottom = 0
+        temp_crtleft = 0
+        temp_crtright = 0
+        temp_crtfront = 0
+        temp_crtback = 0
         temp_tmin = 250
         temp_tmax = -50
         temp_trms = []
@@ -30,14 +41,20 @@ if __name__ == "__main__":
 
         for seg in f['segments']:
             if seg['event_id'] > event_id:
-                # Save only events with energy deposition in the TPC so that data agrees with data from BRN_segment_data.py
+                # Save only events with energy deposition in the TPC so that data agrees with data from signal_segment_data.py
                 if temp_inDet:
                     # Add energy deposited in CRT as well as minimum timestamp of energy deposition per event
-                    data_crt.append(temp_crt)
+                    data_crttop.append(temp_crttop)
+                    data_crtbottom.append(temp_crtbottom)
+                    data_crtleft.append(temp_crtleft)
+                    data_crtright.append(temp_crtright)
+                    data_crtfront.append(temp_crtfront)
+                    data_crtback.append(temp_crtback)
+                    data_crt.append(temp_crttop + temp_crtbottom + temp_crtleft + temp_crtright + temp_crtfront + temp_crtback)
                     data_light.append(temp_tmin)
                     data_tmin.append(temp_tmin)
                     data_tmax.append(temp_tmax)
-
+                    
                     s = 0
                     for t0 in temp_trms:
                         s += (t0 - temp_tmin)**2
@@ -56,7 +73,12 @@ if __name__ == "__main__":
                     data_pmaxe.append(pmaxe)
                 
                 temp_protons = {}
-                temp_crt = 0
+                temp_crttop = 0
+                temp_crtbottom = 0
+                temp_crtleft = 0
+                temp_crtright = 0
+                temp_crtfront = 0
+                temp_crtback = 0
                 temp_tmin = 250
                 temp_tmax = -50
                 temp_trms = []
@@ -68,6 +90,10 @@ if __name__ == "__main__":
             tpc_dist = get_length_in_active_volume(seg['x_start'], seg['x_end'], 
                                                    seg['y_start'], seg['y_end'], 
                                                    seg['z_start'], seg['z_end'])
+
+            crt_dist = get_length_in_cosmic_ray_taggers(seg['x_start'], seg['x_end'],
+                                                        seg['y_start'], seg['y_end'],
+                                                        seg['z_start'], seg['z_end'])
 
             if tpc_dist != 0:
                 temp_inDet = True
@@ -84,8 +110,13 @@ if __name__ == "__main__":
                 if (seg['t0_end'] - seg['t0_start']) > temp_tseg:
                     temp_tseg = seg['t0_end'] - seg['t0_start']
 
-            # Because the CRT and the TPC are the only two sensitive detectors, all energy deposition segments must occur in one or the other
-            temp_crt += seg['dEdx'] * (seg['dx'] - tpc_dist)
+            # Save all energy deposited in cosmic ray tagger
+            temp_crttop += seg['dEdx'] * crt_dist[0]
+            temp_crtbottom += seg['dEdx'] * crt_dist[1]
+            temp_crtleft += seg['dEdx'] * crt_dist[2]
+            temp_crtright += seg['dEdx'] * crt_dist[3]
+            temp_crtfront += seg['dEdx'] * crt_dist[4]
+            temp_crtback += seg['dEdx'] * crt_dist[5]
 
             # Add all energy deposited by protons
             if seg['pdg_id'] == 2212:
@@ -96,7 +127,8 @@ if __name__ == "__main__":
 
             
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/BRN_selection_data.npz', pmaxe=data_pmaxe, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax,
+    np.savez_compressed(outfile_dir + '/BRN_selection_data.npz', pmaxe=data_pmaxe, crttop=data_crttop, crtbottom=data_crtbottom, crtleft=data_crtleft,
+                        crtright=data_crtright, crtfront=data_crtfront, crtback=data_crtback, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax,
                         trms=data_trms, tseg=data_tseg, tdiff=data_tdiff)
     
     print("Data successfully written to file BRN_selection_data.npz!")
