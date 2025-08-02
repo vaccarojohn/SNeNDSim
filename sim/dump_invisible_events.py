@@ -9,6 +9,7 @@ for category in categories:
     # Read NumPy segment and selection data
     segment_data = np.load(category + '/' + file_dir + '/' + category + '_segment_data.npz')
     selection_data = np.load(category + '/' + file_dir + '/' + category + '_selection_data.npz')
+    metadata = np.load(category + '/' + file_dir + '/' + category + '_metadata.npz')
 
     m = 0
     n = 0
@@ -47,4 +48,7 @@ for category in categories:
                         tmin=selection_data['tmin'][visible_events_np], tmax=selection_data['tmax'][visible_events_np], 
                         trms=selection_data['trms'][visible_events_np], tseg=selection_data['tseg'][visible_events_np],
                         tdiff=selection_data['tdiff'][visible_events_np])
+
+    np.savez_compressed(category + '/' + file_dir + '/' + category + '_metadata_reduced.npz', event_ids=metadata['event_ids'][visible_events_np],
+                        file_ids=metadata['file_ids'][visible_events_np])
         
