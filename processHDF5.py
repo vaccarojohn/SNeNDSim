@@ -58,6 +58,9 @@ def updateHDF5File(output_file, trajectories, segments, vertices):
                 f['vertices'][nvert:] = vertices
                 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print("Usage: python processHDF5.py [file1.h5] [file2.h5] ...")
+    
     for filename in sys.argv[1:]:
         print("Opening file " + filename + "...")
         f = h5py.File(filename, 'r')
