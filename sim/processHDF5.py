@@ -1,7 +1,7 @@
 import sys
 import h5py
 import numpy as np
-from sim.helper_functions import get_length_in_active_volume
+from helper_functions import get_length_in_active_volume
 
 # Output array datatypes
 segments_dtype = np.dtype([("event_id","u4"), ("vertex_id", "u8"), ("file_vertex_id", "u8"), ("segment_id", "u4"),
