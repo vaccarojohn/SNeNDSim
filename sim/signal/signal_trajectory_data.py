@@ -11,6 +11,7 @@ if __name__ == "__main__":
     data_palengths = []
     data_pslengths = []
     data_pflengths = []
+    data_pangle = []
 
     for i in range(10):
         print("Loading file " + str(i + 1) + "/10...")
@@ -19,6 +20,7 @@ if __name__ == "__main__":
         event_id = f['trajectories'][0]['event_id']
         
         for traj in f['trajectories']: 
+            
             l = np.sqrt(np.sum(np.square(traj['xyz_start'] - traj['xyz_end'])))
             
             if l == 0:
@@ -34,7 +36,7 @@ if __name__ == "__main__":
                                                                traj['xyz_end'][1], traj['xyz_start'][2], traj['xyz_end'][2]) / l)
             
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/signal_trajectory_data.npz', echanges=data_echanges, lengths=data_lengths, palengths=data_palengths, 
+    np.savez_compressed(outfile_dir + '/signal_trajectory_data_reduced.npz', echanges=data_echanges, lengths=data_lengths, palengths=data_palengths, 
                                                                      pslengths=data_pslengths, pflengths=data_pflengths)
     
-    print("Data successfully written to file signal_trajectory_data.npz!")
+    print("Data successfully written to file signal_trajectory_data_reduced.npz!")

@@ -20,6 +20,7 @@ if __name__ == "__main__":
     data_trms = []
     data_tseg = []
     data_tdiff = []
+    data_pangle = []
 
     for i in range(200):
         print("Loading file " + str(i + 1) + "/200...")
@@ -37,6 +38,7 @@ if __name__ == "__main__":
         temp_tmax = -50
         temp_trms = []
         temp_tseg = 0
+        temp_pangle = 0
         temp_inDet = False
 
         for seg in f['segments']:
@@ -54,6 +56,7 @@ if __name__ == "__main__":
                     data_light.append(temp_tmin)
                     data_tmin.append(temp_tmin)
                     data_tmax.append(temp_tmax)
+                    data_pangle.append(temp_pangle)
                     
                     s = 0
                     for t0 in temp_trms:
@@ -83,6 +86,7 @@ if __name__ == "__main__":
                 temp_tmax = -50
                 temp_trms = []
                 temp_tseg = 0
+                temp_pangle = 0
                 temp_inDet = False
                 
                 event_id = seg['event_id']
@@ -101,6 +105,7 @@ if __name__ == "__main__":
                 # Save minimum timestamp of energy deposition segments for each event
                 if seg['t0'] < temp_tmin:
                     temp_tmin = seg['t0']
+                    temp_pangle = (seg['y_end'] - seg['y_start']) / seg['dx']
                 
                 if seg['t0'] > temp_tmax:
                     temp_tmax = seg['t0']
@@ -129,6 +134,6 @@ if __name__ == "__main__":
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/cosmics_selection_data.npz', pmaxe=data_pmaxe, crttop=data_crttop, crtbottom=data_crtbottom, crtleft=data_crtleft,
                         crtright=data_crtright, crtfront=data_crtfront, crtback=data_crtback, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax,
-                        trms=data_trms, tseg=data_tseg, tdiff=data_tdiff)
+                        trms=data_trms, tseg=data_tseg, tdiff=data_tdiff, pangle=data_pangle)
     
     print("Data successfully written to file cosmics_selection_data.npz!")
