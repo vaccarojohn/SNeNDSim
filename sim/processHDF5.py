@@ -56,12 +56,9 @@ def updateHDF5File(output_file, trajectories, segments, vertices):
                 nvert = len(f['vertices'])
                 f['vertices'].resize((nvert+len(vertices),))
                 f['vertices'][nvert:] = vertices
-                
-if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print("Usage: python processHDF5.py [file1.h5] [file2.h5] ...")
-    
-    for filename in sys.argv[1:]:
+
+def main(argv):
+    for filename in argv:
         print("Opening file " + filename + "...")
         f = h5py.File(filename, 'r')
         initHDF5File(filename[:-3] + '-processed.h5')
@@ -89,4 +86,11 @@ if __name__ == "__main__":
         print("Writing to output...")
         updateHDF5File(filename[:-3] + '-processed.h5', trajectories, segments, vertices)
         print("Successfully written to output file " + filename[:-3] + "-processed.h5!")
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print("Usage: python processHDF5.py [file1.h5] [file2.h5] ...")
+    else:
+        main(sys.argv[1:])
+    
     
