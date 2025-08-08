@@ -2,10 +2,10 @@ import numpy as np
 from gv_significance import poisson_gaussian
 
 NUM_SIMULATIONS = 1000
-BACKGROUND_COUNTS = np.linspace(0, 1200, 20)
+BACKGROUND_COUNTS = np.linspace(0, 400, 10)
 outfile_dir = 'graph_data'
 
-def simulate_detector_efficiency(B, S, error, threshold):
+def simulate_detector_efficiency(S, B, error, threshold):
     q = 0
     total = np.random.poisson(S + B, NUM_SIMULATIONS)
     background = np.random.normal(loc=B, scale=error*B, size=NUM_SIMULATIONS)
@@ -19,7 +19,7 @@ def simulate_detector_efficiency(B, S, error, threshold):
 def get_counts(B, error, threshold, efficiency, S_guess=0):
     
     S = S_guess
-    while simulate_detector_efficiency(B, S, error, threshold) < efficiency:
+    while simulate_detector_efficiency(S, B, error, threshold) < efficiency:
         S += 1
         
     return S
