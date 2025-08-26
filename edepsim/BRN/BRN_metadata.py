@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume
 
-infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/BRN'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -27,6 +27,10 @@ if __name__ == "__main__":
                     
             if not temp_inDet and get_length_in_active_volume(seg['x_start'], seg['x_end'], seg['y_start'], seg['y_end'], seg['z_start'], seg['z_end']) != 0:
                 temp_inDet = True
+
+        if temp_inDet:
+            data_event_ids.append(event_id)
+            data_file_ids.append(i)
 
         f.close()
             

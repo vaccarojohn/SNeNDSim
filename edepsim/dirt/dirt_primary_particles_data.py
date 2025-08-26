@@ -2,13 +2,13 @@ import h5py
 import json
 import numpy as np
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCC'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCCdirt_unprocessed'
 outfile_dir = 'graph_data'
 data = {"electron": {"mult": [], "energy": [], "diry": [], "dirz": []}, "photon": {"mult": [], "energy": [], "diry": [], "dirz": []}, "proton": {"energy": [], "diry": [], "dirz": []}, "neutron": {"energy": [], "diry": [], "dirz": []}, "other": {}}
 
 if __name__ == "__main__":
-    for i in range(10):
-        print("Loading file " + str(i + 1) + "/10...")
+    for i in range(40):
+        print("Loading file " + str(i + 1) + "/40...")
         f = h5py.File(infile_dir + '/nueArCC_sns_g4_' + format(i, "04") + '.h5', 'r')
 
         event_id = f['trajectories'][0]['event_id']
@@ -85,14 +85,16 @@ if __name__ == "__main__":
                     else:
                         data['other'][traj['pdg_id']] = 1
 
+        data['electron']['mult'].append(n_pelec)
+        data['photon']['mult'].append(n_ppho)
         f.close()
 
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/signal_primary_particles.npz', emult=data['electron']['mult'], eenergy=data['electron']['energy'], 
+    np.savez_compressed(outfile_dir + '/dirt_primary_particles.npz', emult=data['electron']['mult'], eenergy=data['electron']['energy'], 
                         ediry=data['electron']['diry'], edirz=data['electron']['dirz'], phmult=data['photon']['mult'], phenergy=data['photon']['energy'],
                         phdiry=data['photon']['diry'], phdirz=data['photon']['dirz'], prenergy=data['proton']['energy'], prdiry=data['proton']['diry'], 
                         prdirz=data['proton']['dirz'], nenergy=data['neutron']['energy'], ndiry=data['neutron']['diry'], ndirz=data['neutron']['dirz'],
                         other_keys=np.array(list(data['other'].keys())), other_vals=np.array(list(data['other'].values())))
     
-    print("Data successfully written to file signal_primary_particles.npz!")
+    print("Data successfully written to file dirt_primary_particles.npz!")
 

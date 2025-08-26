@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/BRN'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":

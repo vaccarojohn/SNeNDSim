@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/NueArCC'
+infile_dir = '/sdf/data/neutrino/yuntse/coherent/SNeNDSens/g4/NueArCCdirt_unprocessed'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -13,8 +13,8 @@ if __name__ == "__main__":
     data_pflengths = []
     data_pangle = []
 
-    for i in range(10):
-        print("Loading file " + str(i + 1) + "/10...")
+    for i in range(40):
+        print("Loading file " + str(i + 1) + "/40...")
         f = h5py.File(infile_dir + '/nueArCC_sns_yDir_g4_' + format(i, "04") + '.h5', 'r')
 
         event_id = f['trajectories'][0]['event_id']
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         f.close()
             
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/signal_trajectory_data_reduced.npz', echanges=data_echanges, lengths=data_lengths, palengths=data_palengths, 
+    np.savez_compressed(outfile_dir + '/dirt_trajectory_data_reduced.npz', echanges=data_echanges, lengths=data_lengths, palengths=data_palengths, 
                                                                      pslengths=data_pslengths, pflengths=data_pflengths)
     
-    print("Data successfully written to file signal_trajectory_data_reduced.npz!")
+    print("Data successfully written to file dirt_trajectory_data_reduced.npz!")

@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN_unprocessed'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN'
 outfile_dir = 'graph_data'
 data = {"neutron": {"energy": [], "diry": [], "dirz": []}, "electron": {"mult": [], "energy": [], "diry": [], "dirz": []}, "photon": {"mult": [], "energy": [], "diry": [], "dirz": []}, "other": {}}
 
@@ -71,6 +71,8 @@ if __name__ == "__main__":
                     else:
                         data['other'][traj['pdg_id']] = 1
 
+        data['electron']['mult'].append(n_pelec)
+        data['photon']['mult'].append(n_ppho)
         f.close()
                         
     print("Writing to output...")

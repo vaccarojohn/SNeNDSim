@@ -85,6 +85,8 @@ if __name__ == "__main__":
                     else:
                         data['other'][traj['pdg_id']] = 1
 
+        data['electron']['mult'].append(n_pelec)
+        data['photon']['mult'].append(n_ppho)
         f.close()
 
     print("Writing to output...")

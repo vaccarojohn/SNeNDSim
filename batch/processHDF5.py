@@ -79,6 +79,9 @@ def main(argv):
             if not temp_inDet and get_length_in_active_volume(seg['x_start'], seg['x_end'], seg['y_start'], seg['y_end'], seg['z_start'], seg['z_end']) != 0:
                 temp_inDet = True
 
+        if temp_inDet:
+            data_event_ids.append(event_id)
+
         vertices = f['vertices'][np.isin(f['vertices']['event_id'], data_event_ids)]
         trajectories = f['trajectories'][np.isin(f['trajectories']['event_id'], data_event_ids)]
         segments = f['segments'][np.isin(f['segments']['event_id'], data_event_ids)]

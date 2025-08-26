@@ -29,7 +29,7 @@ TMP_GAMPIXPY_OUTPUT=/sdf/data/neutrino/jvaccaro/SNeNDSens/temp/${ID}.h5
 
 GAMPIXROOT=/sdf/home/j/jvaccaro/GAMPixPy
 
-COMMAND="python3 ${GAMPIXROOT}/batch_sim.py "${INPUT_EDEPSIM}/nueArCC_sns_g4_${FORMATTED}.h5" -o ${TMP_GAMPIXPY_OUTPUT} -r ${GAMPIXROOT}/gampixpy/readout_config/GAMPixD.yaml -d ${GAMPIXROOT}/gampixpy/detector_config/coh_250.yaml"
+COMMAND="python3 ${GAMPIXROOT}/batch_sim.py "${INPUT_EDEPSIM}/nueArCC_sns_g4_${FORMATTED}-processed.h5" -o ${TMP_GAMPIXPY_OUTPUT} -r ${GAMPIXROOT}/gampixpy/readout_config/GAMPixD.yaml -d ${GAMPIXROOT}/gampixpy/detector_config/coh_250.yaml"
 # COMMAND="python3 ${GAMPIXROOT}/examples/batch_sim.py ${INPUT_EDEPSIM} -o ${TMP_FILE} -r ${READOUT_CONFIG} -d ${DETECTOR_CONFIG}"
 
 echo $COMMAND

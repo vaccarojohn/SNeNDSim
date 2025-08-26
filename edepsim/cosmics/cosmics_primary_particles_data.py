@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/edepsim/Cosmics_unprocessed'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/Cosmics_unprocessed'
 outfile_dir = 'graph_data'
 data = {"muon": {"energy": [], "diry": [], "dirz": []}, "electron": {"mult": [], "energy": [], "diry": [], "dirz": []}, "photon": {"mult": [], "energy": [], "diry": [], "dirz": []}, "other": {}}
 
@@ -70,7 +70,9 @@ if __name__ == "__main__":
                         data['other'][traj['pdg_id']] += 1
                     else:
                         data['other'][traj['pdg_id']] = 1
-
+                        
+        data['electron']['mult'].append(n_pelec)
+        data['photon']['mult'].append(n_ppho)
         f.close()
                         
     print("Writing to output...")

@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_cosmic_ray_taggers
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCC'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCCdirt_processed'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -14,18 +14,17 @@ if __name__ == "__main__":
     data_crtfront = []
     data_crtback = []
     data_crt = []
-    data_light = []
     data_tmin = []
     data_tmax = []
     data_trms = []
     data_tseg = []
     data_tdiff = []
-    data_pangle = []
-    data_pangle2 = []
+    data_theta = []
+    data_phi = []
 
-    for i in range(10):
-        print("Loading file " + str(i + 1) + "/10...")
-        f = h5py.File(infile_dir + '/nueArCC_sns_g4_' + format(i, "04") + '.h5', 'r')
+    for i in range(40):
+        print("Loading file " + str(i + 1) + "/40...")
+        f = h5py.File(infile_dir + '/nueArCC_sns_g4_' + format(i, "04") + '-processed.h5', 'r')
 
         event_id = f['segments'][0]['event_id']
         temp_protons = {}
@@ -39,8 +38,8 @@ if __name__ == "__main__":
         temp_tmax = -50
         temp_trms = []
         temp_tseg = 0
-        temp_pangle = 0
-        temp_pangle2 = 0
+        temp_theta = 0
+        temp_phi = 0
         temp_inDet = False
 
         for seg in f['segments']:
@@ -55,11 +54,10 @@ if __name__ == "__main__":
                     data_crtfront.append(temp_crtfront)
                     data_crtback.append(temp_crtback)
                     data_crt.append(temp_crttop + temp_crtbottom + temp_crtleft + temp_crtright + temp_crtfront + temp_crtback)
-                    data_light.append(temp_tmin)
                     data_tmin.append(temp_tmin)
                     data_tmax.append(temp_tmax)
-                    data_pangle.append(temp_pangle)
-                    data_pangle2.append(temp_pangle2)
+                    data_theta.append(temp_theta)
+                    data_phi.append(temp_phi)
                     
                     s = 0
                     for t0 in temp_trms:
@@ -89,8 +87,8 @@ if __name__ == "__main__":
                 temp_tmax = -50
                 temp_trms = []
                 temp_tseg = 0
-                temp_pangle = 0
-                temp_pangle2 = 0
+                temp_theta = 0
+                temp_phi = 0
                 temp_inDet = False
                 
                 event_id = seg['event_id']
@@ -110,17 +108,14 @@ if __name__ == "__main__":
                 if seg['t0'] < temp_tmin:
                     temp_tmin = seg['t0']
 
-                    l = np.sqrt((seg['x_end'] - seg['x_start'])**2 + (seg['y_end'] - seg['y_start'])**2)
+                    l = np.sqrt((seg['x_end'] - seg['x_start'])**2 + (seg['y_end'] - seg['y_start'])**2 + (seg['z_end'] - seg['z_start'])**2)
+                    l2 = np.sqrt((seg['x_end'] - seg['x_start'])**2 + (seg['y_end'] - seg['y_start'])**2)
                     if (seg['y_end'] - seg['y_start'] >= 0):
-                        temp_pangle = np.arccos((seg['x_end'] - seg['x_start']) / l) if l != 0 else 0
+                        temp_theta = (seg['z_end'] - seg['z_start']) / l
+                        temp_phi = np.arccos((seg['x_end'] - seg['x_start']) / l2) if l2 != 0 else 0
                     else:
-                        temp_pangle = np.pi - np.arccos((seg['x_end'] - seg['x_start']) / l)
-                        
-                    l = np.sqrt((seg['y_end'] - seg['y_start'])**2 + (seg['z_end'] - seg['z_start'])**2)
-                    if (seg['z_end'] - seg['z_start'] >= 0):
-                        temp_pangle2 = np.arccos((seg['y_end'] - seg['y_start']) / l) if l != 0 else 0
-                    else:
-                        temp_pangle2 = np.pi - np.arccos((seg['y_end'] - seg['y_start']) / l)
+                        temp_theta = -(seg['z_end'] - seg['z_start']) / l
+                        temp_pangle = np.pi - np.arccos((seg['x_end'] - seg['x_start']) / l2)
                 
                 if seg['t0'] > temp_tmax:
                     temp_tmax = seg['t0']
@@ -145,11 +140,43 @@ if __name__ == "__main__":
                 else:
                     temp_protons[seg['traj_id']] = seg['dEdx'] * tpc_dist
 
+        # Process final event in file
+        if temp_inDet:
+            # Add energy deposited in CRT as well as minimum timestamp of energy deposition per event
+            data_crttop.append(temp_crttop)
+            data_crtbottom.append(temp_crtbottom)
+            data_crtleft.append(temp_crtleft)
+            data_crtright.append(temp_crtright)
+            data_crtfront.append(temp_crtfront)
+            data_crtback.append(temp_crtback)
+            data_crt.append(temp_crttop + temp_crtbottom + temp_crtleft + temp_crtright + temp_crtfront + temp_crtback)
+            data_tmin.append(temp_tmin)
+            data_tmax.append(temp_tmax)
+            data_theta.append(temp_theta)
+            data_phi.append(temp_phi)
+                    
+            s = 0
+            for t0 in temp_trms:
+                s += (t0 - temp_tmin)**2
+            s /= len(temp_trms)
+            data_trms.append(np.sqrt(s))
+                    
+            data_tseg.append(temp_tseg)
+            data_tdiff.append(temp_tmax - temp_tmin)
+                
+            # Search for proton with highest energy deposition
+            pmaxe = 0
+            for proton in temp_protons:
+                if temp_protons[proton] > pmaxe:
+                    pmaxe = temp_protons[proton]
+                
+            data_pmaxe.append(pmaxe)
+
         f.close()
             
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/signal_selection_data.npz', pmaxe=data_pmaxe, crttop=data_crttop, crtbottom=data_crtbottom, crtleft=data_crtleft,
-                        crtright=data_crtright, crtfront=data_crtfront, crtback=data_crtback, crt=data_crt, light=data_light, tmin=data_tmin, tmax=data_tmax,
-                        trms=data_trms, tseg=data_tseg, tdiff=data_tdiff, pangle=data_pangle, pangle2=data_pangle2)
+    np.savez_compressed(outfile_dir + '/dirt_selection_data.npz', pmaxe=data_pmaxe, crttop=data_crttop, crtbottom=data_crtbottom, crtleft=data_crtleft,
+                        crtright=data_crtright, crtfront=data_crtfront, crtback=data_crtback, crt=data_crt, tmin=data_tmin, tmax=data_tmax,
+                        trms=data_trms, tseg=data_tseg, tdiff=data_tdiff, theta=data_theta, phi=data_phi)
     
-    print("Data successfully written to file signal_selection_data.npz!")
+    print("Data successfully written to file dirt_selection_data.npz!")

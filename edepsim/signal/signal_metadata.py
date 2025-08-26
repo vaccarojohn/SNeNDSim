@@ -27,6 +27,12 @@ if __name__ == "__main__":
                     
             if not temp_inDet and get_length_in_active_volume(seg['x_start'], seg['x_end'], seg['y_start'], seg['y_end'], seg['z_start'], seg['z_end']) != 0:
                 temp_inDet = True
+
+        if temp_inDet:
+            data_event_ids.append(event_id)
+            data_file_ids.append(i)
+
+        f.close()
             
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/signal_metadata.npz', event_ids=data_event_ids, file_ids=data_file_ids)
