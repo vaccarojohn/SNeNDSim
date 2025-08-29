@@ -57,17 +57,21 @@ if __name__ == "__main__":
                         for seg2 in f['segments'][temp_first:i]:
                             d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                         + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
+
+                            energy = seg2['dEdx'] * get_length_in_active_volume(seg['x_start'], seg['x_end'], 
+                                                                                seg['y_start'], seg['y_end'], 
+                                                                                seg['z_start'], seg['z_end'])
                         
                             if d < 0.1:
-                                temp_e01cm += seg2['dE']
+                                temp_e01cm += energy
                             if d < 0.5:
-                                temp_e05cm += seg2['dE']
+                                temp_e05cm += energy
                             if d < 1:
-                                temp_e1cm += seg2['dE']
+                                temp_e1cm += energy
                             if d < 2:
-                                temp_e2cm += seg2['dE']
+                                temp_e2cm += energy
                             if d < 3:
-                                temp_e3cm += seg2['dE']
+                                temp_e3cm += energy
 
                         data_e01cm.append(temp_e01cm)
                         data_pe01cm.append(temp_e01cm / temp_aenergy)
@@ -129,17 +133,21 @@ if __name__ == "__main__":
                 for seg2 in f['segments'][temp_first:i]:
                     d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                 + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
-                        
+
+                    energy = seg2['dEdx'] * get_length_in_active_volume(seg['x_start'], seg['x_end'], 
+                                                                        seg['y_start'], seg['y_end'], 
+                                                                        seg['z_start'], seg['z_end'])
+                    
                     if d < 0.1:
-                        temp_e01cm += seg2['dE']
+                        temp_e01cm += energy
                     if d < 0.5:
-                        temp_e05cm += seg2['dE']
+                        temp_e05cm += energy
                     if d < 1:
-                        temp_e1cm += seg2['dE']
+                        temp_e1cm += energy
                     if d < 2:
-                        temp_e2cm += seg2['dE']
+                        temp_e2cm += energy
                     if d < 3:
-                        temp_e3cm += seg2['dE']
+                        temp_e3cm += energy
 
                 data_e01cm.append(temp_e01cm)
                 data_pe01cm.append(temp_e01cm / temp_aenergy)

@@ -1,12 +1,12 @@
 import numpy as np
 
-GRADIENT_STEP_SIZE = 0.01
-OPTIMIZATION_STEP_SIZE = 0.01
+GRADIENT_STEP_SIZE = 0.1
+OPTIMIZATION_STEP_SIZE = 0.05
 OPTIMIZATION_STEP_NUM = 10
-SIGNAL_WEIGHT = 116.5 / 100000
+SIGNAL_WEIGHT = 0.001165
 COSMICS_WEIGHT = 9
 BRN_WEIGHT = 0.312
-DIRT_WEIGHT = 0.000233
+DIRT_WEIGHT = 0.002032
 
 # Read NumPy data
 infile_dir = 'graph_data'
@@ -20,49 +20,55 @@ dirt_segment_data = np.load('../dirt/' + infile_dir + '/dirt_segment_data.npz')
 dirt_selection_data = np.load('../dirt/' + infile_dir + '/dirt_selection_data.npz')
 
 # Returns s / sqrt(b) with the applied selection cuts [SignalVolEFrac > 0.1 & SignalVolE > 5 & MaxE > 5 & TotalE < 52 & TotalE > 10 & pMaxE < 20 & all CRT panels < 1.2 & tMin > c1 & tMin < c2]
-def apply_selection_cuts(c1, c2):
+def apply_selection_cuts(c1, c2, c3, c4, c5, c6, c7):
     # Get signal counts
     n = 0
-    for psenergy, senergy, lcte, aenergy, pmaxe, lctl, crt, tmin in np.column_stack((signal_segment_data['psenergy'], signal_segment_data['senergy'],
-                                                                               signal_segment_data['lctes'], signal_segment_data['aenergy'],
-                                                                               signal_selection_data['pmaxe'], signal_segment_data['lctls'],
-                                                                               signal_selection_data['crt'], signal_selection_data['tmin'])):
+    for senergy, lcte, aenergy, pmaxe, lctl, theta, crttop, crt, tmin in np.column_stack((signal_segment_data['senergy'], signal_segment_data['lctes'],
+                                                                                          signal_segment_data['aenergy'], signal_selection_data['pmaxe'],
+                                                                                          signal_segment_data['lctls'], signal_selection_data['theta'], 
+                                                                                          signal_selection_data['crttop'], signal_selection_data['crt'],
+                                                                                          signal_selection_data['tmin'])):
         
-        if psenergy > 0.1 and senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 10 and pmaxe < 20 and lctl > 2 and crt < 1.2 and tmin > c1 and tmin < c2:
+        if senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 5 and pmaxe < 20 and lctl > c1 and theta > c2 and theta < c3 and crttop < c4 and crt < c5 and tmin > c6 and tmin < c7:
             n += 1
 
     signal = n * SIGNAL_WEIGHT
 
     # Get cosmics counts
     n = 0
-    for psenergy, senergy, lcte, aenergy, pmaxe, lctl, crt, tmin in np.column_stack((cosmics_segment_data['psenergy'], cosmics_segment_data['senergy'],
-                                                                               cosmics_segment_data['lctes'], cosmics_segment_data['aenergy'],
-                                                                               cosmics_selection_data['pmaxe'], cosmics_segment_data['lctls'],
-                                                                               cosmics_selection_data['crt'], cosmics_selection_data['tmin'])):
+    for senergy, lcte, aenergy, pmaxe, lctl, theta, crttop, crt, tmin in np.column_stack((cosmics_segment_data['senergy'], cosmics_segment_data['lctes'],
+                                                                                          cosmics_segment_data['aenergy'], cosmics_selection_data['pmaxe'],
+                                                                                          cosmics_segment_data['lctls'], cosmics_selection_data['theta'], 
+                                                                                          cosmics_selection_data['crttop'], cosmics_selection_data['crt'],
+                                                                                          cosmics_selection_data['tmin'])):
         
-        if psenergy > 0.1 and senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 10 and pmaxe < 20 and lctl > 2 and crt < 1.2 and tmin > c1 and tmin < c2:
+        if senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 5 and pmaxe < 20 and lctl > c1 and theta > c2 and theta < c3 and crttop < c4 and crt < c5 and tmin > c6 and tmin < c7:
             n += 1
 
     background = n * COSMICS_WEIGHT
 
     # Get BRN counts
-    for psenergy, senergy, lcte, aenergy, pmaxe, lctl, crt, tmin in np.column_stack((BRN_segment_data['psenergy'], BRN_segment_data['senergy'],
-                                                                               BRN_segment_data['lctes'], BRN_segment_data['aenergy'],
-                                                                               BRN_selection_data['pmaxe'], BRN_segment_data['lctls'],
-                                                                               BRN_selection_data['crt'], BRN_selection_data['tmin'])):
+    n = 0
+    for senergy, lcte, aenergy, pmaxe, lctl, theta, crttop, crt, tmin in np.column_stack((BRN_segment_data['senergy'], BRN_segment_data['lctes'],
+                                                                                          BRN_segment_data['aenergy'], BRN_selection_data['pmaxe'],
+                                                                                          BRN_segment_data['lctls'], BRN_selection_data['theta'], 
+                                                                                          BRN_selection_data['crttop'], BRN_selection_data['crt'],
+                                                                                          BRN_selection_data['tmin'])):
         
-        if psenergy > 0.1 and senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 10 and pmaxe < 20 and lctl > 2 and crt < 1.2 and tmin > c1 and tmin < c2:
+        if senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 5 and pmaxe < 20 and lctl > c1 and theta > c2 and theta < c3 and crttop < c4 and crt < c5 and tmin > c6 and tmin < c7:
             n += 1
 
     background += n * BRN_WEIGHT
 
     # Get dirt counts
-    for psenergy, senergy, lcte, aenergy, pmaxe, lctl, crt, tmin in np.column_stack((dirt_segment_data['psenergy'], dirt_segment_data['senergy'],
-                                                                               dirt_segment_data['lctes'], dirt_segment_data['aenergy'],
-                                                                               dirt_selection_data['pmaxe'], dirt_segment_data['lctls'],
-                                                                               dirt_selection_data['crt'], dirt_selection_data['tmin'])):
+    n = 0
+    for senergy, lcte, aenergy, pmaxe, lctl, theta, crttop, crt, tmin in np.column_stack((dirt_segment_data['senergy'], dirt_segment_data['lctes'],
+                                                                                          dirt_segment_data['aenergy'], dirt_selection_data['pmaxe'],
+                                                                                          dirt_segment_data['lctls'], dirt_selection_data['theta'], 
+                                                                                          dirt_selection_data['crttop'], dirt_selection_data['crt'],
+                                                                                          dirt_selection_data['tmin'])):
         
-        if psenergy > 0.1 and senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 10 and pmaxe < 20 and lctl > 2 and crt < 1.2 and tmin > c1 and tmin < c2:
+        if senergy > 5 and lcte > 5 and aenergy < 52 and aenergy > 5 and pmaxe < 20 and lctl > c1 and theta > c2 and theta < c3 and crttop < c4 and crt < c5 and tmin > c6 and tmin < c7:
             n += 1
 
     background += n * DIRT_WEIGHT
@@ -70,28 +76,38 @@ def apply_selection_cuts(c1, c2):
     return signal / np.sqrt(background)
 
 # Returns a numerical approximation of the gradient of the selection cut function
-def grad(c1, c2):
-    dc1 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1 + GRADIENT_STEP_SIZE, c2)
-                                            - apply_selection_cuts(c1 - GRADIENT_STEP_SIZE, c2))
-    dc2 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2 + GRADIENT_STEP_SIZE)
-                                            - apply_selection_cuts(c1, c2 - GRADIENT_STEP_SIZE))
+def grad(c1, c2, c3, c4, c5, c6, c7):
+    dc1 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1 + GRADIENT_STEP_SIZE, c2, c3, c4, c5, c6, c7)
+                                            - apply_selection_cuts(c1 - GRADIENT_STEP_SIZE, c2, c3, c4, c5, c6, c7))
+    dc2 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2 + GRADIENT_STEP_SIZE, c3, c4, c5, c6, c7)
+                                            - apply_selection_cuts(c1, c2 - GRADIENT_STEP_SIZE, c3, c4, c5, c6, c7))
+    dc3 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2, c3 + GRADIENT_STEP_SIZE, c4, c5, c6, c7)
+                                            - apply_selection_cuts(c1, c2, c3 - GRADIENT_STEP_SIZE, c4, c5, c6, c7))
+    dc4 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2, c3, c4 + GRADIENT_STEP_SIZE, c5, c6, c7)
+                                            - apply_selection_cuts(c1, c2, c3, c4 - GRADIENT_STEP_SIZE, c5, c6, c7))
+    dc5 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2, c3, c4, c5 + GRADIENT_STEP_SIZE, c6, c7)
+                                            - apply_selection_cuts(c1, c2, c3, c4, c5 - GRADIENT_STEP_SIZE, c6, c7))
+    dc6 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2, c3, c4, c5, c6 + GRADIENT_STEP_SIZE, c7)
+                                            - apply_selection_cuts(c1, c2, c3, c4, c5, c6 - GRADIENT_STEP_SIZE, c7))
+    dc7 = (1 / (2 * GRADIENT_STEP_SIZE)) * (apply_selection_cuts(c1, c2, c3, c4, c5, c6, c7 + GRADIENT_STEP_SIZE)
+                                            - apply_selection_cuts(c1, c2, c3, c4, c5, c6, c7 - GRADIENT_STEP_SIZE))
 
 
-    return np.array([dc1, dc2])
+    return np.array([dc1, dc2, dc3, dc4, dc5, dc6, dc7])
 
 if __name__ == "__main__":
     print("Optimizing selection cuts...")
     
-    maxval = apply_selection_cuts(0.25, 8)
-    print("Initial params = [0.25, 8]")
+    maxval = apply_selection_cuts(4.4, -0.91, 0.98, 1.5, 3, 0, 8.1)
+    print("Initial params = [4.4, -0.91, 0.98, 1.5, 3, 0, 8.1]")
     print("Initial s/sqrt(b) = " + str(maxval))
-    params = np.array([0.25, 8])
+    params = np.array([4.4, -0.91, 0.98, 1.5, 3, 0, 8.1])
 
     for i in range(OPTIMIZATION_STEP_NUM):
         print("Step " + str(i + 1) + "/" + str(OPTIMIZATION_STEP_NUM))
-        params += (OPTIMIZATION_STEP_SIZE * grad(params[0], params[1]))
+        params += (OPTIMIZATION_STEP_SIZE * grad(params[0], params[1], params[2], params[3], params[4], params[5], params[6]))
 
-    maxval = apply_selection_cuts(params[0], params[1])
+    maxval = apply_selection_cuts(params[0], params[1], params[2], params[3], params[4], params[5], params[6])
     print("Final params = " + str(params))
     print("Final s/sqrt(b) = " + str(maxval))
 
