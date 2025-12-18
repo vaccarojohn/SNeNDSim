@@ -1,0 +1,23 @@
+python3 /sdf/home/j/jvaccaro/GAMPixPy/batch_sim.py /sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCC/nueArCC_sns_g4_0000.h5 -o /sdf/data/neutrino/jvaccaro/SNeNDSens/temp/4247268b-eb1c-4c15-892e-57927b46b4d1.h5 -r /sdf/home/j/jvaccaro/GAMPixPy/gampixpy/readout_config/GAMPixD.yaml -d /sdf/home/j/jvaccaro/GAMPixPy/gampixpy/detector_config/coh_250.yaml
+Traceback (most recent call last):
+  File "/sdf/home/j/jvaccaro/GAMPixPy/batch_sim.py", line 9, in <module>
+    from gampixpy import detector, input_parsing, plotting, config, output
+  File "/sdf/home/j/jvaccaro/GAMPixPy/gampixpy/plotting.py", line 9, in <module>
+    import SLACplots
+ModuleNotFoundError: No module named 'SLACplots'
+python3 /sdf/home/j/jvaccaro/GAMPixPy/rotate_to_experimental_coordinates.py /sdf/data/neutrino/jvaccaro/SNeNDSens/temp/4247268b-eb1c-4c15-892e-57927b46b4d1.h5 -o /sdf/data/neutrino/jvaccaro/SNeNDSens/gampixpy/NueArCC/nueArCC_sns_g4_gampixpy_0000.h5 -d /sdf/home/j/jvaccaro/GAMPixPy/gampixpy/detector_config/coh_250.yaml
+Default device set to: NVIDIA GeForce RTX 2080 Ti
+Traceback (most recent call last):
+  File "/sdf/home/j/jvaccaro/GAMPixPy/rotate_to_experimental_coordinates.py", line 138, in <module>
+    main(args)
+  File "/sdf/home/j/jvaccaro/GAMPixPy/rotate_to_experimental_coordinates.py", line 53, in main
+    infile = h5py.File(args.input_gampixpy)
+  File "/usr/local/lib/python3.10/dist-packages/h5py/_hl/files.py", line 562, in __init__
+    fid = make_fid(name, mode, userblock_size, fapl, fcpl, swmr=swmr)
+  File "/usr/local/lib/python3.10/dist-packages/h5py/_hl/files.py", line 235, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 102, in h5py.h5f.open
+FileNotFoundError: [Errno 2] Unable to synchronously open file (unable to open file: name = '/sdf/data/neutrino/jvaccaro/SNeNDSens/temp/4247268b-eb1c-4c15-892e-57927b46b4d1.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+rm: cannot remove '/sdf/data/neutrino/jvaccaro/SNeNDSens/temp/4247268b-eb1c-4c15-892e-57927b46b4d1.h5': No such file or directory
