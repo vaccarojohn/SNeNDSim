@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCCdirt_processed'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCCdirt_Overlay_processed'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -19,6 +19,10 @@ if __name__ == "__main__":
     data_pfenergy = []
     data_psenergy = []
 
+    # HOG-related quantities
+    data_numhog = []
+    data_hogdep = []
+
     for i in range(40):
         print("Loading file " + str(i + 1) + "/40...")
         f = h5py.File(infile_dir + '/nueArCC_sns_g4_' + format(i, "04") + '-processed.h5', 'r')
@@ -29,6 +33,8 @@ if __name__ == "__main__":
         temp_lengths = {}
         temp_totalenergy = [0, 0, 0]
         temp_inDet = False
+        temp_hogtpc = []
+        temp_hogdep = 0
 
         for seg in f['segments']:
             if seg['event_id'] > event_id:
@@ -79,6 +85,8 @@ if __name__ == "__main__":
                         data_aenergy.append(temp_totalenergy[2])
                         data_pfenergy.append(temp_totalenergy[0] / temp_totalenergy[2])
                         data_psenergy.append(temp_totalenergy[1] / temp_totalenergy[2])
+                        data_numhog.append(len(temp_hogtpc))
+                        data_hogdep.append(temp_hogdep)
                     else:
                         data_prenergies.append(0)
                         data_prlengths.append(0)
@@ -87,12 +95,16 @@ if __name__ == "__main__":
                         data_aenergy.append(0)
                         data_pfenergy.append(0)
                         data_psenergy.append(0)
+                        data_numhog.append(0)
+                        data_hogdep.append(0)
                 
                 temp_particles = {}
                 temp_energies = {}
                 temp_lengths = {}
                 temp_totalenergy = [0, 0, 0]
                 temp_inDet = False
+                temp_hogtpc = []
+                temp_hogdep = 0
                 
                 event_id = seg['event_id']
 
@@ -125,6 +137,12 @@ if __name__ == "__main__":
                 temp_particles[seg['traj_id']] = seg['pdg_id']
                 temp_energies[seg['traj_id']] = seg['dEdx'] * in_active
                 temp_lengths[seg['traj_id']] = in_active
+
+            # Add HOG-related quantities
+            if in_active != 0 and seg['vertex_id'] != 0:
+                temp_hogdep += seg['dEdx'] * in_active
+                if seg['vertex_id'] not in temp_hogtpc:
+                    temp_hogtpc.append(seg['vertex_id'])
 
         # Process final event in file
         if temp_inDet:
@@ -174,6 +192,8 @@ if __name__ == "__main__":
                 data_aenergy.append(temp_totalenergy[2])
                 data_pfenergy.append(temp_totalenergy[0] / temp_totalenergy[2])
                 data_psenergy.append(temp_totalenergy[1] / temp_totalenergy[2])
+                data_numhog.append(len(temp_hogtpc))
+                data_hogdep.append(temp_hogdep)
             else:
                 data_prenergies.append(0)
                 data_prlengths.append(0)
@@ -182,6 +202,8 @@ if __name__ == "__main__":
                 data_aenergy.append(0)
                 data_pfenergy.append(0)
                 data_psenergy.append(0)
+                data_numhog.append(0)
+                data_hogdep.append(0)
 
         f.close()
 
@@ -190,6 +212,6 @@ if __name__ == "__main__":
                         pfenergy=data_pfenergy, psenergy=data_psenergy, prenergies=data_prenergies, prlengths=data_prlengths, lctes=data_lctes, 
                         lctls=data_lctls, lengths=data_lengths, eparticles=np.array(list(edata_particles.keys())), 
                         ecounts=np.array(list(edata_particles.values())), lparticles=np.array(list(ldata_particles.keys())), 
-                        lcounts=np.array(list(ldata_particles.values())))
+                        lcounts=np.array(list(ldata_particles.values())), numhog=data_numhog, hogdep=data_hogdep)
     
     print("Data successfully written to file dirt_segment_data.npz!")
