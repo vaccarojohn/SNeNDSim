@@ -11,9 +11,9 @@
 
 SINGULARITY_IMAGE_PATH=/sdf/group/neutrino/images/larcv2_ub22.04-cuda12.1-pytorch2.2.1-larndsim.sif
 
-HOME_DIR=/sdf/home/j/jvaccaro
+HOME_DIR=/sdf/home/j/jvaccaro/SNeNDSim
 FILE_PATH=$1
 
 COMMAND="python3 ${HOME_DIR}/${FILE_PATH}"
 echo $COMMAND
-singularity exec --env PYTHONPATH="\$PYTHONPATH:/sdf/home/j/jvaccaro" --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
+singularity exec --env PYTHONPATH="\$PYTHONPATH:/sdf/home/j/jvaccaro/SNeNDSim" --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
