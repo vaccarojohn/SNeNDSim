@@ -14,8 +14,8 @@ DB_EPSILON = []
 DB_MIN_SAMPLES = []
 EVENT = 0
 FILE = 0
-DB_EPSILON = [0.8]
-DB_MIN_SAMPLES = [4]
+DB_EPSILON = [0.7]
+DB_MIN_SAMPLES = [3]
 
 class Trace:
 
@@ -82,9 +82,9 @@ class Trace:
 def inverseBirksModel(dQdx):
     a = physics_config['birks_model']['birks_ab'] / physics_config['material']['w']
     b = physics_config['birks_model']['birks_kb'] / (physics_config['charge_drift']['drift_field'] * physics_config['material']['density'])
-    val = dQdx / (a - b * dQdx)
-    #print("dEdx / dQdx = " + str(val))
-    return val
+    val = 1 / (a - b * dQdx)
+    print("dEdx / dQdx = " + str(val))
+    return dQdx * val
 
 def main():
     f = h5py.File(edepsim_infile_dir + '/nueArCC_sns_g4_' + format(FILE, "04") + '.h5', 'r')

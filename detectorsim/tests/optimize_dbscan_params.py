@@ -12,11 +12,11 @@ gampix_infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/gampixpy/NueArCC'
 outfile_dir = 'graph_data'
 physics_config = config.default_physics_params
 
-DB_EPSILON = [0.8, 1]
-DB_MIN_SAMPLES = [3, 5]
+DB_EPSILON = [0.7]
+DB_MIN_SAMPLES = [3]
 FILE = 0
 
-data = np.zeros((2, 2, 12, 10000), dtype=np.float64)
+data = np.zeros((1, 1, 27, 10000), dtype=np.float64)
 
 def main():
     f = h5py.File(edepsim_infile_dir + '/nueArCC_sns_g4_' + format(FILE, "04") + '.h5', 'r')
@@ -46,7 +46,7 @@ def main():
                 # Calculate charge deposited after recombination by accounting for electron lifetime in LAr
                 charge = event_pixel_hits['hit charge'] * np.exp(drift_time / physics_config['charge_drift']['electron_lifetime'])
             
-                """print("----------------------------------------------------------------------------------------------------------------------")
+                #print("----------------------------------------------------------------------------------------------------------------------")
                 
                 # Find out EdepSim hitSegments contributing to EdepSim trajectories
                 for i, seg in enumerate(f['segments'][segment_mask]):
@@ -65,12 +65,19 @@ def main():
                                            (seg['y_start'] + seg['y_end'])/2, (seg['z_start'] + seg['z_end'])/2, (seg['t_start'] + seg['t_end'])/2)
                         edepsim_traces[seg['traj_id']] = trace
             
-                print("EdepSim trajectory truth data: " + str([str(traj_id) + ": " + str(edepsim_traces[traj_id].segs) for traj_id in edepsim_traces]))
+                #print("EdepSim trajectory truth data: " + str([str(traj_id) + ": " + str(edepsim_traces[traj_id].segs) for traj_id in edepsim_traces]))
             
                 # Find total energy deposited in TPC and leading charged trajectory
                 maximum_energy = -1
                 maximum_energy_id = -1
                 aenergy = 0
+
+                # Data for comparison with DBSCAN
+                aenergy_edepsim = 0
+                lcte_edepsim = 0
+                center_edepsim = [0, 0, 0, 0]
+                lct_segments_edepsim = []
+                
                 for traj_id in edepsim_traces:
                     edepsim_traces[traj_id].fill_mask(len(f['segments'][segment_mask]))
                     dE = sum(edepsim_traces[traj_id].contrib)
@@ -79,8 +86,15 @@ def main():
                     if dE > maximum_energy:
                         maximum_energy = dE
                         maximum_energy_id = traj_id
+
+                # Save data for comparison with DBSCAN
+                if maximum_energy != -1:
+                    aenergy_edepsim = aenergy
+                    lcte_edepsim = maximum_energy
+                    center_edepsim = edepsim_traces[maximum_energy_id].calculate_center()
+                    lct_segments_edepsim = edepsim_traces[maximum_energy_id].segs
             
-                print("The total energy deposited in the TPC was: " + str(aenergy) + " MeV.")
+                """print("The total energy deposited in the TPC was: " + str(aenergy) + " MeV.")
                 print("EdepSim identified the leading charged trajectory as: #" + str(maximum_energy_id))
                 print("The center of this trajectory was: " + str(edepsim_traces[maximum_energy_id].calculate_center()) + ".")
                 print("The total energy deposition from this trajectory was: " + str(maximum_energy) + " MeV.")
@@ -225,29 +239,42 @@ def main():
                     lct_segments_dbscan = dbscan_traces[maximum_energy_id].segs
         
                 # Save to data
-                data[epsilon_id, min_samples_id, 0, event] = (aenergy_dbscan - aenergy_gampixpy)
-                
-                if aenergy_gampixpy != 0:
-                    data[epsilon_id, min_samples_id, 1, event] = (aenergy_dbscan - aenergy_gampixpy) / aenergy_gampixpy
-                else:
-                    data[epsilon_id, min_samples_id, 1, event] = 0
-                    
-                data[epsilon_id, min_samples_id, 2, event] = (lcte_dbscan - lcte_gampixpy)
-                
-                if lcte_gampixpy != 0:
-                    data[epsilon_id, min_samples_id, 3, event] = (lcte_dbscan - lcte_gampixpy) / lcte_gampixpy
-                else:
-                    data[epsilon_id, min_samples_id, 3, event] = 0
-                    
-                data[epsilon_id, min_samples_id, 4, event] = (center_dbscan[0] - center_gampixpy[0])
-                data[epsilon_id, min_samples_id, 5, event] = (center_dbscan[1] - center_gampixpy[1])
-                data[epsilon_id, min_samples_id, 6, event] = (center_dbscan[2] - center_gampixpy[2])
-                data[epsilon_id, min_samples_id, 7, event] = (center_dbscan[3] - center_gampixpy[3])
+                data[epsilon_id, min_samples_id, 0, event] = aenergy_dbscan
+                data[epsilon_id, min_samples_id, 1, event] = aenergy_gampixpy
+                data[epsilon_id, min_samples_id, 2, event] = aenergy_edepsim
 
-                data[epsilon_id, min_samples_id, 8, event] = len(set(lct_segments_gampixpy) - set(lct_segments_dbscan))
-                data[epsilon_id, min_samples_id, 9, event] = len(set(lct_segments_dbscan) - set(lct_segments_gampixpy))
-                data[epsilon_id, min_samples_id, 10, event] = len(lct_segments_gampixpy)
-                data[epsilon_id, min_samples_id, 11, event] = len(lct_segments_dbscan)
+                data[epsilon_id, min_samples_id, 3, event] = lcte_dbscan
+                data[epsilon_id, min_samples_id, 4, event] = lcte_gampixpy
+                data[epsilon_id, min_samples_id, 5, event] = lcte_edepsim
+                    
+                data[epsilon_id, min_samples_id, 6, event] = center_dbscan[0]
+                data[epsilon_id, min_samples_id, 7, event] = center_gampixpy[0]
+                data[epsilon_id, min_samples_id, 8, event] = center_edepsim[0]
+
+                data[epsilon_id, min_samples_id, 9, event] = center_dbscan[1]
+                data[epsilon_id, min_samples_id, 10, event] = center_gampixpy[1]
+                data[epsilon_id, min_samples_id, 11, event] = center_edepsim[1]
+                
+                data[epsilon_id, min_samples_id, 12, event] = center_dbscan[2]
+                data[epsilon_id, min_samples_id, 13, event] = center_gampixpy[2]
+                data[epsilon_id, min_samples_id, 14, event] = center_edepsim[2]
+                
+                data[epsilon_id, min_samples_id, 15, event] = center_dbscan[3]
+                data[epsilon_id, min_samples_id, 16, event] = center_gampixpy[3]
+                data[epsilon_id, min_samples_id, 17, event] = center_edepsim[3]
+
+                data[epsilon_id, min_samples_id, 18, event] = len(set(lct_segments_gampixpy) - set(lct_segments_dbscan))
+                data[epsilon_id, min_samples_id, 19, event] = len(set(lct_segments_dbscan) - set(lct_segments_gampixpy))
+
+                data[epsilon_id, min_samples_id, 20, event] = len(set(lct_segments_edepsim) - set(lct_segments_dbscan))
+                data[epsilon_id, min_samples_id, 21, event] = len(set(lct_segments_dbscan) - set(lct_segments_edepsim))
+
+                data[epsilon_id, min_samples_id, 22, event] = len(set(lct_segments_gampixpy) - set(lct_segments_edepsim))
+                data[epsilon_id, min_samples_id, 23, event] = len(set(lct_segments_edepsim) - set(lct_segments_gampixpy))
+
+                data[epsilon_id, min_samples_id, 24, event] = len(lct_segments_dbscan)
+                data[epsilon_id, min_samples_id, 25, event] = len(lct_segments_gampixpy)
+                data[epsilon_id, min_samples_id, 26, event] = len(lct_segments_edepsim)
             
                 """print("The total energy deposited in the TPC was: " + str(aenergy) + " MeV.")
                 print("DBSCAN identified the leading charged trace as: #" + str(maximum_energy_id))
@@ -257,7 +284,7 @@ def main():
                 print("----------------------------------------------------------------------------------------------------------------------")"""
     
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/dbscan_optimization_data_6.npz', data=data)
+    np.savez_compressed(outfile_dir + '/dbscan_final_data.npz', data=data)
 
 if __name__ == "__main__":
     main()
