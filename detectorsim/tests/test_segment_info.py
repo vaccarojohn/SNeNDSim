@@ -83,7 +83,7 @@ def inverseBirksModel(dQdx):
     a = physics_config['birks_model']['birks_ab'] / physics_config['material']['w']
     b = physics_config['birks_model']['birks_kb'] / (physics_config['charge_drift']['drift_field'] * physics_config['material']['density'])
     val = 1 / (a - b * dQdx)
-    print("dEdx / dQdx = " + str(val))
+    #print("dEdx / dQdx = " + str(val))
     return dQdx * val
 
 def main():

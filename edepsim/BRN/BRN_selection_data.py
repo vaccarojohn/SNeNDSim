@@ -22,8 +22,8 @@ if __name__ == "__main__":
     data_theta = []
     data_phi = []
 
-    for i in range(50):
-        print("Loading file " + str(i + 1) + "/50...")
+    for i in range(80):
+        print("Loading file " + str(i + 1) + "/80...")
         f = h5py.File(infile_dir + '/BRN_g4_' + format(i, "04") + '.h5', 'r')
 
         event_id = f['segments'][0]['event_id']

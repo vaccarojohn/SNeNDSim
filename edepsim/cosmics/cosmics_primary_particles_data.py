@@ -74,9 +74,10 @@ if __name__ == "__main__":
         data['electron']['mult'].append(n_pelec)
         data['photon']['mult'].append(n_ppho)
         f.close()
-                        
-    print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/cosmics_primary_particles.npz', menergy=data['muon']['energy'], mdiry=data['muon']['diry'], mdirz=data['muon']['dirz'], 
+
+    if i % 200 == 0 and i != 0:
+        print("Writing to output...")
+        np.savez_compressed(outfile_dir + '/cosmics_primary_particles' + str(i) + '.npz', menergy=data['muon']['energy'], mdiry=data['muon']['diry'], mdirz=data['muon']['dirz'], 
                         emult=data['electron']['mult'], eenergy=data['electron']['energy'], ediry=data['electron']['diry'],
                         edirz=data['electron']['dirz'], phmult=data['photon']['mult'], phenergy=data['photon']['energy'],
                         phdiry=data['photon']['diry'], phdirz=data['photon']['dirz'], other_keys=np.array(list(data['other'].keys())),

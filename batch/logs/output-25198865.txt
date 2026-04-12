@@ -1,0 +1,14 @@
+python3 /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/batch_sim.py /sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/NueArCC/nueArCC_sns_g4_0000.h5 -o /sdf/data/neutrino/jvaccaro/SNeNDSens/temp/f635e859-1d35-44c2-a5be-a715cb850f7e.h5 -r /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/gampixpy/readout_config/GAMPixD.yaml -d /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/gampixpy/detector_config/coh_250.yaml
+Default device set to: NVIDIA GeForce RTX 2080 Ti
+Traceback (most recent call last):
+  File "/sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/batch_sim.py", line 112, in <module>
+    main(args)
+  File "/sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/batch_sim.py", line 40, in main
+    detector_model = detector.DetectorModel(detector_params = detector_config,
+TypeError: DetectorModel.__init__() got an unexpected keyword argument 'detector_params'
+python3 /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/rotate_to_experimental_coordinates.py /sdf/data/neutrino/jvaccaro/SNeNDSens/temp/f635e859-1d35-44c2-a5be-a715cb850f7e.h5 -o /sdf/data/neutrino/jvaccaro/SNeNDSens/gampixpy/NueArCC/nueArCC_sns_g4_gampixpy_0000.h5 -d /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/gampixpy/detector_config/coh_250.yaml
+Traceback (most recent call last):
+  File "/sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/rotate_to_experimental_coordinates.py", line 7, in <module>
+    N_LABELS_COARSE = readout_objects.N_LABELS_COARSE
+AttributeError: module 'gampixpy.readout_objects' has no attribute 'N_LABELS_COARSE'
+rm: cannot remove '/sdf/data/neutrino/jvaccaro/SNeNDSens/temp/f635e859-1d35-44c2-a5be-a715cb850f7e.h5': No such file or directory

@@ -9,7 +9,7 @@ if __name__ == "__main__":
     data_event_ids = []
     data_file_ids = []
 
-    for i in range(1200):
+    for i in range(1001, 1200):
         print("Loading file " + str(i + 1) + "/1200...")
         f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "04") + '.h5', 'r')
         
@@ -33,7 +33,7 @@ if __name__ == "__main__":
             data_file_ids.append(i)
 
         f.close()
-            
+
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/cosmics_metadata.npz', event_ids=data_event_ids, file_ids=data_file_ids)
     

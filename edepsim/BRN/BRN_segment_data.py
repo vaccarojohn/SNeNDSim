@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 from helper_functions import get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN_Overlay'
+infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/BRN'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     data_numhog = []
     data_hogdep = []
 
-    for i in range(50):
-        print("Loading file " + str(i + 1) + "/50...")
+    for i in range(80):
+        print("Loading file " + str(i + 1) + "/80...")
         f = h5py.File(infile_dir + '/BRN_g4_' + format(i, "04") + '.h5', 'r')
 
         event_id = f['segments'][0]['event_id']

@@ -114,12 +114,12 @@ def get_length_in_fiducial_volume(x_start, x_end, y_start, y_end, z_start, z_end
     return get_length_in_box(x_start, x_end, y_start, y_end, z_start, z_end, 20, 15, 20)
 
 def get_length_in_cosmic_ray_taggers(x_start, x_end, y_start, y_end, z_start, z_end):
-    CRTtop = get_length_in_box(x_start, x_end, y_start, y_end, z_start - 62, z_end - 62, 50, 50, 1.5)
-    CRTbottom = get_length_in_box(x_start, x_end, y_start, y_end, z_start + 62, z_end + 62, 50, 50, 1.5)
-    CRTleft = get_length_in_box(x_start + 52, x_end + 52, y_start, y_end, z_start, z_end, 1.5, 50, 60)
-    CRTright = get_length_in_box(x_start - 52, x_end - 52, y_start, y_end, z_start, z_end, 1.5, 50, 60)
-    CRTfront = get_length_in_box(x_start, x_end, y_start + 52, y_end + 52, z_start, z_end, 50, 1.5, 60)
-    CRTback = get_length_in_box(x_start, x_end, y_start - 52, y_end - 52, z_start, z_end, 50, 1.5, 60)
+    CRTtop = get_length_in_box(x_start, x_end, y_start, y_end, z_start - 68, z_end - 68, 58, 58, 1.5)
+    CRTbottom = get_length_in_box(x_start, x_end, y_start, y_end, z_start + 80, z_end + 80, 58, 58, 1.5)
+    CRTleft = get_length_in_box(x_start + 56.5, x_end + 56.5, y_start, y_end, z_start + 6, z_end + 6, 1.5, 55, 72)
+    CRTright = get_length_in_box(x_start - 56.5, x_end - 56.5, y_start, y_end, z_start + 6, z_end + 6, 1.5, 55, 72)
+    CRTfront = get_length_in_box(x_start, x_end, y_start + 56.5, y_end + 56.5, z_start + 6, z_end + 6, 55, 1.5, 72)
+    CRTback = get_length_in_box(x_start, x_end, y_start - 56.5, y_end - 56.5, z_start + 6, z_end + 6, 55, 1.5, 72)
 
     return (CRTtop, CRTbottom, CRTleft, CRTright, CRTfront, CRTback)
     

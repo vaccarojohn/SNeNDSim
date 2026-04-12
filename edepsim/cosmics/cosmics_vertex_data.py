@@ -17,7 +17,7 @@ if __name__ == "__main__":
     data_e3cm = []
     data_pe3cm = []
 
-    for i in range(1200):
+    for i in range(1001, 1200):
         print("Loading file " + str(i + 1) + "/1200...")
         f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "04") + '-processed.h5', 'r')
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         temp_aenergy = 0
         temp_inDet = False
 
-        for i, seg in enumerate(f['segments']):
+        for j, seg in enumerate(f['segments']):
             if seg['event_id'] > event_id:
                 # Save only events with energy deposition in the TPC so that data agrees with data from signal_segment_data.py
                 if temp_inDet:
@@ -54,7 +54,7 @@ if __name__ == "__main__":
                         temp_e3cm = 0
 
                         # Find all energy deposition sufficiently close to the first segment in the TPC
-                        for seg2 in f['segments'][temp_first:i]:
+                        for seg2 in f['segments'][temp_first:j]:
                             d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                         + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                         data_pe3cm.append(temp_e3cm / temp_aenergy)
                     
                 temp_tmin = 250
-                temp_first = i
+                temp_first = j
                 temp_x = 0
                 temp_y = 0
                 temp_z = 0
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 temp_e3cm = 0
 
                 # Find all energy deposition sufficiently close to the first segment in the TPC
-                for seg2 in f['segments'][temp_first:i]:
+                for seg2 in f['segments'][temp_first:j]:
                     d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                 + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
                 data_pe3cm.append(temp_e3cm / temp_aenergy)
 
         f.close()
-            
+
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/cosmics_vertex_data.npz', e01cm=data_e01cm, pe01cm=data_pe01cm, e05cm=data_e05cm, pe05cm=data_pe05cm, e1cm=data_e1cm,
                         pe1cm=data_pe1cm, e2cm=data_e2cm, pe2cm=data_pe2cm, e3cm=data_e3cm, pe3cm=data_pe3cm)

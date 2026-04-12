@@ -30,7 +30,7 @@ if __name__ == "__main__":
         temp_aenergy = 0
         temp_inDet = False
 
-        for i, seg in enumerate(f['segments']):
+        for j, seg in enumerate(f['segments']):
             if seg['event_id'] > event_id:
                 # Save only events with energy deposition in the TPC so that data agrees with data from signal_segment_data.py
                 if temp_inDet:
@@ -54,7 +54,7 @@ if __name__ == "__main__":
                         temp_e3cm = 0
 
                         # Find all energy deposition sufficiently close to the first segment in the TPC
-                        for seg2 in f['segments'][temp_first:i]:
+                        for seg2 in f['segments'][temp_first:j]:
                             d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                         + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                         data_pe3cm.append(temp_e3cm / temp_aenergy)
                     
                 temp_tmin = 250
-                temp_first = i
+                temp_first = j
                 temp_x = 0
                 temp_y = 0
                 temp_z = 0
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 temp_e3cm = 0
 
                 # Find all energy deposition sufficiently close to the first segment in the TPC
-                for seg2 in f['segments'][temp_first:i]:
+                for seg2 in f['segments'][temp_first:j]:
                     d = np.sqrt(((seg2['x_start'] + seg2['x_end']) / 2 - temp_x)**2 + ((seg2['y_start'] + seg2['y_end']) / 2 - temp_y)**2
                                 + ((seg2['z_start'] + seg2['z_end']) / 2 - temp_z)**2)
 

@@ -12,8 +12,8 @@ if __name__ == "__main__":
     data_pslengths = []
     data_pflengths = []
 
-    for i in range(50):
-        print("Loading file " + str(i + 1) + "/10...")
+    for i in range(80):
+        print("Loading file " + str(i + 1) + "/80...")
         f = h5py.File(infile_dir + '/BRN_g4_' + format(i, "04") + '.h5', 'r')
 
         event_id = f['trajectories'][0]['event_id']
