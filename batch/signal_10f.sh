@@ -10,7 +10,7 @@
 #SBATCH --gpus=1
 #SBATCH --array=0-9
 
-SINGULARITY_IMAGE_PATH=/sdf/group/neutrino/images/larcv2_ub22.04-cuda12.1-pytorch2.2.1-larndsim.sif
+SINGULARITY_IMAGE_PATH=/sdf/group/neutrino/images/larcv2_ub22.04-cuda12.1-pytorch2.4.0-larndsim.sif
 
 # INPUT_EDEPSIM=$1
 # GAMPIXPY_OUTPUT=$2
@@ -40,8 +40,8 @@ COMMAND="python3 ${GAMPIXROOT}/batch_sim.py "${INPUT_EDEPSIM}/nueArCC_sns_g4_${F
 echo $COMMAND
 singularity exec --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
 
-COMMAND="python3 ${GAMPIXROOT}/rotate_to_experimental_coordinates.py ${TMP_GAMPIXPY_OUTPUT} -o ${ROTATED_OUTPUT}/nueArCC_sns_g4_gampixpy_${FORMATTED}.h5 -d ${GAMPIXROOT}/detector_config/coh_250.yaml"
-# COMMAND="python3 ${GAMPIXROOT}/examples/rotate_to_experimental_coordinates.py ${TMP_FILE} -o ${OUTPUT_HDF5} -d ${DETECTOR_CONFIG}"
+COMMAND="python3 ${GAMPIXROOT}/rotate_to_experimental_coordinates.py ${TMP_GAMPIXPY_OUTPUT} -o ${ROTATED_OUTPUT}/nueArCC_sns_g4_gampixpy_${FORMATTED}.h5"
+# COMMAND="python3 ${GAMPIXROOT}/examples/rotate_to_experimental_coordinates.py ${TMP_FILE} -o ${OUTPUT_HDF5}"
 
 echo $COMMAND
 singularity exec --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}

@@ -2,7 +2,7 @@ import numpy as np
 from gv_significance import poisson_gaussian
 
 NUM_SIMULATIONS = 1000
-BACKGROUND_COUNTS = np.linspace(0, 400, 10)
+BACKGROUND_COUNTS = np.linspace(0, 200, 10)
 outfile_dir = 'graph_data'
 
 def simulate_detector_efficiency(S, B, error, threshold):

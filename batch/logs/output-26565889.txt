@@ -1,0 +1,11 @@
+pip3 install gampixpy==0.3.2s
+Defaulting to user installation because normal site-packages is not writeable
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python3 -m pip install --upgrade pip
+ERROR: Invalid requirement: 'gampixpy==0.3.2s': Expected end or semicolon (after version specifier)
+    gampixpy==0.3.2s
+            ~~~~~~~^
+python3 /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/batch_sim.py /sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/Cosmics_processed/CosmicFlux_g4_0000-processed.h5 -o /sdf/data/neutrino/jvaccaro/SNeNDSens/temp/9d0e2fc5-0c3d-4a88-bfdf-ef9a735160d6.h5 -r /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/readout_config/GAMPixD_cosmics.yaml -d /sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy/detector_config/coh_250.yaml
+Default device set to: NVIDIA GeForce RTX 2080 Ti
+  0%|          | 0/637 [00:00<?, ?it/s]  0%|          | 1/637 [00:09<1:44:07,  9.82s/it]  0%|          | 2/637 [00:09<43:28,  4.11s/it]    0%|          | 3/637 [00:14<45:17,  4.29s/it]slurmstepd: error: *** JOB 26565889 ON sdfturing026 CANCELLED AT 2026-05-13T10:55:30 ***

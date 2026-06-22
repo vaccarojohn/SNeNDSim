@@ -14,6 +14,15 @@ def between(x, x_i, x_f):
 
 def val(x, x_i, x_f, y_i, y_f):
     return y_i + (y_f - y_i) * ((x - x_i) / (x_f - x_i))
+
+def touching_edge(x_start, x_end, y_start, y_end, z_start, z_end, xbox, ybox, zbox):
+    return (between(xbox, x_start, x_end) or between(ybox, y_start, y_end) or between(zbox, z_start, z_end))
+
+def edge_dist(x_start, x_end, y_start, y_end, z_start, z_end, xbox, ybox, zbox):
+    return min(xbox - abs(x_start), xbox - abs(x_end), ybox - abs(y_start), ybox - abs(y_end), zbox - abs(z_start), zbox - abs(z_end))
+
+def get_theta(x_start, x_end, y_start, y_end, z_start, z_end):
+    return abs(z_end - z_start) / np.sqrt((x_end - x_start)**2 + (y_end - y_start)**2 + (z_end - z_start)**2)
     
 def get_length_in_box(x_start, x_end, y_start, y_end, z_start, z_end, xbox, ybox, zbox):
     found = False
