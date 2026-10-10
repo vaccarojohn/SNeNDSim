@@ -10,7 +10,7 @@
 #SBATCH --gpus=1
 
 SINGULARITY_IMAGE_PATH=/sdf/group/neutrino/images/larcv2_ub22.04-cuda12.1-pytorch2.4.0-larndsim.sif
-GAMPIXPY_VERSION="0.3.3"
+GAMPIXPY_VERSION="0.3.5"
 
 # INPUT_EDEPSIM=$1
 # GAMPIXPY_OUTPUT=$2
@@ -32,19 +32,9 @@ COMMAND="pip3 install gampixpy==${GAMPIXPY_VERSION}"
 echo $COMMAND
 singularity exec --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
 
-COMMAND="pip3 install spconv"
-
-echo $COMMAND
-singularity exec --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
-
-COMMAND="pip3 install --upgrade numpy"
-
-echo $COMMAND
-singularity exec --nv -B /sdf,/lscratch ${SINGULARITY_IMAGE_PATH} ${COMMAND}
-
 GAMPIXROOT=/sdf/home/j/jvaccaro/SNeNDSim/GAMPixPy
 
-COMMAND="python3 ${GAMPIXROOT}/batch_sim.py "${INPUT_EDEPSIM}/CosmicFlux_g4_${FORMATTED}-processed.h5" -o ${ROTATED_OUTPUT}/CosmicFlux_g4_gampixpy_${FORMATTED}.h5 -r ${GAMPIXROOT}/readout_config/GAMPixD_cosmics.yaml -d ${GAMPIXROOT}/detector_config/coh_250.yaml -n 10"
+COMMAND="python3 ${GAMPIXROOT}/batch_sim.py "${INPUT_EDEPSIM}/CosmicFlux_g4_${FORMATTED}-processed.h5" -o ${ROTATED_OUTPUT}/CosmicFlux_g4_gampixpy_${FORMATTED}.h5 -r ${GAMPIXROOT}/readout_config/GAMPixD_cosmics.yaml -d ${GAMPIXROOT}/detector_config/coh_250.yaml"
 # COMMAND="python3 ${GAMPIXROOT}/examples/batch_sim.py ${INPUT_EDEPSIM} -o ${TMP_FILE} -r ${READOUT_CONFIG} -d ${DETECTOR_CONFIG}"
 
 echo $COMMAND

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     data_theta = []
     data_phi = []
 
-    for i in range(1001, 1200):
+    for i in range(1200):
         print("Loading file " + str(i + 1) + "/1200...")
         f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "04") + '-processed.h5', 'r')
 

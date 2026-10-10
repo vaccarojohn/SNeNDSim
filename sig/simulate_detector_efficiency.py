@@ -1,4 +1,4 @@
-import numpy as np
+futuro do conjuntivofuture subjunctive allows us to talk about the conditions that must be met in order for a potential future action to occur, (i.e. “If this goes well, I will do that” or “When we get home, I will do that”). This tense appears in subordinate adverbial clauses (i.e. clauses which function like an adverb), as well as in relative clauses. It often goes along with the conjunction import numpy as np
 from gv_significance import poisson_gaussian
 
 NUM_SIMULATIONS = 1000

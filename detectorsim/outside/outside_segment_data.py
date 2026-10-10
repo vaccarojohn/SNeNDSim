@@ -42,9 +42,11 @@ if __name__ == "__main__":
         metadata_mask = metadata['file_ids'] == i
         for event_id in metadata['event_ids'][metadata_mask]:
             # Find charge readout data from GAMPixPy and recalculate `hit x` based on vertex timing
-            vertex_mask = f['vertices']['event_id'] == event_id
+            segments_mask = f['segments']['event_id'] == event_id
+            available_segments = f['segments'][segments_mask]
             event_pixel_hit_mask = g['pixels']['event id'] == event_id
             event_pixel_hits = g['pixels'][event_pixel_hit_mask]
+            available_segment_indices = np.array([np.where(available_segments['segment_id'] == label)[0][0] for label in event_pixel_hits['label'][:,0]])
 
             if len(event_pixel_hits) == 0:
                 # No GAMPixPy hits
@@ -58,11 +60,11 @@ if __name__ == "__main__":
                 data_closestedge.append(0)
                 data_theta.append(0)
             else:
-                drift_time = np.add.outer(event_pixel_hits['trig t'] - f['vertices'][vertex_mask][0]['t_vert'], waveform_timesteps)
+                drift_time = np.add.outer(event_pixel_hits['trig t'] - available_segments[available_segment_indices]['t0_start'], waveform_timesteps)
                 tpc_index_selector = 2 * event_pixel_hits['pixel tpc'].astype(int) - 1 # -1 for TPC index 0, 1 for TPC index 1
                 hit_x = np.einsum('ij,i->ij', (30 - drift_time * physics_config['charge_drift']['drift_speed']), tpc_index_selector).flatten()
-                hit_y = np.outer(event_pixel_hits['exp y'], waveform_ones).flatten()
-                hit_z = np.outer(event_pixel_hits['exp z'], waveform_ones).flatten()
+                hit_y = event_pixel_hits['ext pos'][:,:,1].flatten()
+                hit_z = event_pixel_hits['ext pos'][:,:,2].flatten()
 
                 # Calculate charge deposited after recombination by accounting for electron lifetime in LAr
                 charge = (event_pixel_hits['waveform'] * np.exp(drift_time / physics_config['charge_drift']['electron_lifetime'])).flatten()
@@ -155,7 +157,7 @@ if __name__ == "__main__":
                 
         f.close()
         g.close()
-            
+
     print("Writing to output...")
     np.savez_compressed(outfile_dir + '/outside_segment_data.npz', fenergy=data_fenergy, senergy=data_senergy, aenergy=data_aenergy,
                         pfenergy=data_pfenergy, psenergy=data_psenergy, lctes=data_lctes, lctls=data_lctls, closestedge=data_closestedge, theta=data_theta)
