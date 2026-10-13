@@ -10,6 +10,7 @@ if __name__ == "__main__":
     data_prlengths = []
     data_lctes = []
     data_lctls = []
+    data_lctls_euclidean = []
     data_closestedge = []
     edata_particles = {}
     data_lengths = []
@@ -61,9 +62,14 @@ if __name__ == "__main__":
                         data_theta.append(get_theta(lct_data['xyz_start'][0], lct_data['xyz_end'][0],
                                                     lct_data['xyz_start'][1], lct_data['xyz_end'][1],
                                                     lct_data['xyz_start'][2], lct_data['xyz_end'][2]))
+
+                        data_lctls_euclidean.append(np.sqrt((lct_data['xyz_start'][0] - lct_data['xyz_end'][0])**2
+                                                            + (lct_data['xyz_start'][1] - lct_data['xyz_end'][1])**2
+                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))
                     else:
                         data_lctes.append(0)
                         data_lctls.append(0)
+                        data_lctls_euclidean.append(0)
                         data_closestedge.append(0)
                         data_theta.append(0)
 
@@ -174,10 +180,15 @@ if __name__ == "__main__":
                 data_theta.append(get_theta(lct_data['xyz_start'][0], lct_data['xyz_end'][0],
                                             lct_data['xyz_start'][1], lct_data['xyz_end'][1],
                                             lct_data['xyz_start'][2], lct_data['xyz_end'][2]))
+
+                data_lctls_euclidean.append(np.sqrt((lct_data['xyz_start'][0] - lct_data['xyz_end'][0])**2
+                                                            + (lct_data['xyz_start'][1] - lct_data['xyz_end'][1])**2
+                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))
                 
             else:
                 data_lctes.append(0)
                 data_lctls.append(0)
+                data_lctls_euclidean.append(0)
                 data_closestedge.append(0)
                 data_theta.append(0)
 
@@ -216,9 +227,12 @@ if __name__ == "__main__":
         f.close()
 
     print("Writing to output...")
-    np.savez_compressed(outfile_dir + '/BRN_segment_data_exp.npz', fenergy=data_fenergy, senergy=data_senergy, aenergy=data_aenergy, 
-                        pfenergy=data_pfenergy, psenergy=data_psenergy, prenergies=data_prenergies, prlengths=data_prlengths, lctes=data_lctes, 
-                        lctls=data_lctls, closestedge=data_closestedge, theta=data_theta,
+    np.savez_compressed(outfile_dir + '/BRN_segment_data_exp.npz',
+                        fenergy=data_fenergy, senergy=data_senergy, aenergy=data_aenergy, 
+                        pfenergy=data_pfenergy, psenergy=data_psenergy,
+                        prenergies=data_prenergies, prlengths=data_prlengths, lctes=data_lctes, 
+                        lctls=data_lctls, lctls_euclidean=data_lctls_euclidean,
+                        closestedge=data_closestedge, theta=data_theta,
                         lengths=data_lengths, eparticles=np.array(list(edata_particles.keys())), 
                         ecounts=np.array(list(edata_particles.values())), lparticles=np.array(list(ldata_particles.keys())), 
                         lcounts=np.array(list(ldata_particles.values())))
