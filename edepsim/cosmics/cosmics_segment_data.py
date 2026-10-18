@@ -2,7 +2,8 @@ import h5py
 import numpy as np
 from helper_functions import edge_dist, get_theta, get_length_in_active_volume, get_length_in_signal_volume, get_length_in_fiducial_volume
 
-infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/Cosmics_processed'
+infile_dir = '/sdf/data/neutrino/eob11235/SNeND/SNeNDSens/20x20BatchOutput/'
+#infile_dir = '/sdf/data/neutrino/jvaccaro/SNeNDSens/edepsim/Cosmics_processed'
 outfile_dir = 'graph_data'
     
 if __name__ == "__main__":
@@ -22,9 +23,9 @@ if __name__ == "__main__":
     data_psenergy = []
     data_theta = []
     
-    for i in range(1200):
-        print("Loading file " + str(i + 1) + "/1200...")
-        f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "04") + '-processed.h5', 'r')
+    for i in range(12000):
+        print("Loading file " + str(i + 1) + "/12000...")
+        f = h5py.File(infile_dir + '/CosmicFlux_g4_' + format(i, "05") + '.h5', 'r')
 
         event_id = f['segments'][0]['event_id']
         temp_particles = {}
@@ -57,7 +58,7 @@ if __name__ == "__main__":
                         else:
                             edata_particles[temp_particles[greatest_energy_dep]] = 1
                         data_closestedge.append(temp_closestedge[greatest_energy_dep])
-                        lct_mask = (f['trajectories']['event_id'] == event_id) & (f['trajectories']['traj_id'] == greatest_energy_dep)
+                        """lct_mask = (f['trajectories']['event_id'] == event_id) & (f['trajectories']['traj_id'] == greatest_energy_dep)
                         lct_data = f['trajectories'][lct_mask][0]
                         data_theta.append(get_theta(lct_data['xyz_start'][0], lct_data['xyz_end'][0],
                                                     lct_data['xyz_start'][1], lct_data['xyz_end'][1],
@@ -65,13 +66,13 @@ if __name__ == "__main__":
 
                         data_lctls_euclidean.append(np.sqrt((lct_data['xyz_start'][0] - lct_data['xyz_end'][0])**2
                                                             + (lct_data['xyz_start'][1] - lct_data['xyz_end'][1])**2
-                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))
+                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))"""
                     else:
                         data_lctes.append(0)
                         data_lctls.append(0)
-                        data_lctls_euclidean.append(0)
+                        #data_lctls_euclidean.append(0)
                         data_closestedge.append(0)
-                        data_theta.append(0)
+                        #data_theta.append(0)
 
                     if temp_lengths[longest_path] > 0:
                         data_lengths.append(temp_lengths[longest_path])
@@ -175,7 +176,7 @@ if __name__ == "__main__":
                 else:
                     edata_particles[temp_particles[greatest_energy_dep]] = 1
                 data_closestedge.append(temp_closestedge[greatest_energy_dep])
-                lct_mask = (f['trajectories']['event_id'] == event_id) & (f['trajectories']['traj_id'] == greatest_energy_dep)
+                """lct_mask = (f['trajectories']['event_id'] == event_id) & (f['trajectories']['traj_id'] == greatest_energy_dep)
                 lct_data = f['trajectories'][lct_mask][0]
                 data_theta.append(get_theta(lct_data['xyz_start'][0], lct_data['xyz_end'][0],
                                             lct_data['xyz_start'][1], lct_data['xyz_end'][1],
@@ -183,13 +184,13 @@ if __name__ == "__main__":
 
                 data_lctls_euclidean.append(np.sqrt((lct_data['xyz_start'][0] - lct_data['xyz_end'][0])**2
                                                             + (lct_data['xyz_start'][1] - lct_data['xyz_end'][1])**2
-                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))
+                                                            + (lct_data['xyz_start'][2] - lct_data['xyz_end'][2])**2))"""
             else:
                 data_lctes.append(0)
                 data_lctls.append(0)
-                data_lctls_euclidean.append(0)
+                #data_lctls_euclidean.append(0)
                 data_closestedge.append(0)
-                data_theta.append(0)
+                #data_theta.append(0)
 
             if temp_lengths[longest_path] > 0:
                 data_lengths.append(temp_lengths[longest_path])
@@ -225,9 +226,9 @@ if __name__ == "__main__":
 
         f.close()
 
-        if (i + 1) % 200 == 0:
+        if (i + 1) % 2000 == 0:
             print("Writing to output...")
-            np.savez_compressed(outfile_dir + '/cosmics_segment_data_exp_' + str(i) + '.npz',
+            np.savez_compressed(outfile_dir + '/cosmics_segment_data_big_batch_' + str(i) + '.npz',
                                 fenergy=data_fenergy, senergy=data_senergy, aenergy=data_aenergy,
                                 pfenergy=data_pfenergy, psenergy=data_psenergy, prenergies=data_prenergies,
                                 prlengths=data_prlengths, lctes=data_lctes, lctls=data_lctls, 
